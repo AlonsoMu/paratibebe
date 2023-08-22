@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="./styles.css">
-    <title>FORmULARIO</title>
+    <title>FORMULARIO</title>
 </head>
 <body>
     <div class="container-form register">
@@ -24,6 +24,7 @@
                 <h2>Crear una Cuenta</h2>
                 <div class="icons">
                     <i class='bx bxl-google'></i>
+                    
                 </div>
                 <p>o usa tu correo electrónico para registrarte</p>
                 <form class="form">
@@ -37,7 +38,7 @@
                     </label>
                     <label>
                         <i class='bx bx-envelope' ></i>
-                        <input type="text" id="correo" placeholder="Correo Electrónico">
+                        <input type="email" id="correo" placeholder="Correo Electrónico">
                     </label>
                     <label>
                         <i class='bx bx-lock-alt' ></i>
@@ -87,6 +88,10 @@
    <!-- SweetAlert2 -->
    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+   <!-- jQuery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+
 
   <script>
     $(document).ready(function() {
@@ -98,55 +103,73 @@
                 var correo = $("#correo").val();
                 var clave = $("#clave").val();
 
-                // Verificar si todos los campos están llenos
-                if (nombres === "" || apellidos === "" || correo === "" || clave === "") {
-                    // Mostrar alerta con SweetAlert en caso de campos vacíos
+                var emailx = document.getElementById('correo');
+                var validemail = /^\w+([.-_+]?\w+)@\w+([.-]?\w+)(.\w{2,10})+$/; //comprobar si el correo existe (hay un arroba y punto) - asi cumplira la nomenclatura
+
+                if(validemail.test(emailx.value)){
+
+                    // Verificar si todos los campos están llenos
+                    if (nombres === "" || apellidos === "" || clave === "") {
+                        // Mostrar alerta con SweetAlert en caso de campos vacíos
+                    
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Por favor, completa todos los campos.',
+                            confirmButtonText: 'Cerrar'
+                        });                        
+                        
+                    } else {
+                        // Enviar datos al servidor utilizando AJAX
+                        $.ajax({
+                            type: "POST",
+                            url: "../controllers/usuario.controller.php",
+                            data: {
+                                operacion: "registrar",
+                                nombres: nombres,
+                                apellidos: apellidos,
+                                correo: correo,
+                                clave: clave
+                            },
+                            dataType: "json",
+                            success: function(data) {
+                                if (data.status) {
+                                    // Mostrar alerta de éxito con SweetAlert
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Registro Exitoso',
+                                        text: data.mensaje,
+                                        confirmButtonText: 'Cerrar'
+                                    });
+
+                                    // Limpiar los campos del formulario
+                                    $("#nombres").val("");
+                                    $("#apellidos").val("");
+                                    $("#correo").val("");
+                                    $("#clave").val("");
+                                } else {
+                                    // Mostrar alerta de error con SweetAlert
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: data.mensaje,
+                                        confirmButtonText: 'Cerrar'
+                                    });
+                                }
+                            }
+                        });
+                    }
+
+                }else{
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Por favor, completa todos los campos.',
+                        text: 'Email Invalido.',
                         confirmButtonText: 'Cerrar'
                     });
-                } else {
-                    // Enviar datos al servidor utilizando AJAX
-                    $.ajax({
-                        type: "POST",
-                        url: "../controllers/usuario.controller.php",
-                        data: {
-                            operacion: "registrar",
-                            nombres: nombres,
-                            apellidos: apellidos,
-                            correo: correo,
-                            clave: clave
-                        },
-                        dataType: "json",
-                        success: function(data) {
-                            if (data.status) {
-                                // Mostrar alerta de éxito con SweetAlert
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Registro Exitoso',
-                                    text: data.mensaje,
-                                    confirmButtonText: 'Cerrar'
-                                });
-
-                                // Limpiar los campos del formulario
-                                $("#nombres").val("");
-                                $("#apellidos").val("");
-                                $("#correo").val("");
-                                $("#clave").val("");
-                            } else {
-                                // Mostrar alerta de error con SweetAlert
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: data.mensaje,
-                                    confirmButtonText: 'Cerrar'
-                                });
-                            }
-                        }
-                    });
                 }
+
+
             });
         });
 

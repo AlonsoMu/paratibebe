@@ -4,15 +4,17 @@ USE proyectoInnovacion
 
 -- CREACCION DE LA TABLA LOGIN
 CREATE TABLE usuarios(
-	idusuario 	INT		AUTO_INCREMENT	PRIMARY KEY,
-	nombres		VARCHAR(50)	NOT NULL,
-	apellidos	VARCHAR(50)	NOT NULL,
-	correo		VARCHAR(60)	NOT NULL,
-	clave		VARCHAR(90)	NOT NULL,
-	estado		CHAR(1)		NOT NULL DEFAULT 'A',
-	fecharegistro	DATETIME 	NOT NULL DEFAULT NOW(),
-	fechaupdate	DATETIME	NULL,
-	CONSTRAINT uk_correo_cor 	UNIQUE(correo)
+	idusuario 		INT		AUTO_INCREMENT	PRIMARY KEY,
+	nombres			VARCHAR(50)	NOT NULL,
+	apellidos		VARCHAR(50)	NOT NULL,
+	correo			VARCHAR(60)	NOT NULL,
+	clave			VARCHAR(90)	NOT NULL,
+	estado			CHAR(1)		NOT NULL DEFAULT 'A',
+	fecharegistro		DATETIME 	NOT NULL DEFAULT NOW(),
+	fechaupdate		DATETIME	NULL,
+	token			VARCHAR(100)	NOT NULL,
+	estatus 		ENUM('0','1') 	NOT NULL DEFAULT '0',
+	CONSTRAINT uk_correo_cor UNIQUE(correo)
 )ENGINE = INNODB;
 
 INSERT INTO usuarios(nombres, apellidos, correo, clave)

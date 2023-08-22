@@ -40,29 +40,85 @@ if (isset($_POST['operacion'])){
     echo json_encode($resultado);
   }
 
+
+
+
+
+
+  //-------------------------------------------------------------
+
+
+
+
+
+
+
+
+
   if($_POST['operacion'] == 'registrar'){
-    $datosForm = [
-      "nombres"         => $_POST['nombres'],
-      "apellidos"       => $_POST['apellidos'],
-      "correo"          => $_POST['correo'],
-      "clave"           => $_POST['clave'],   
-    ];
+
+    $correocompare = 'alonsomunoz263@gmail.com';
+    $coleo = 'alonsomunoz263@gmail.com';
+
+    if($coleo == $correocompare):
+
+      $datosForm = [
+        "nombres"         => $_POST['nombres'],
+        "apellidos"       => $_POST['apellidos'],
+        "correo"          => $_POST['correo'],
+        "clave"           => $_POST['clave'],   
+      ];
+
       // Encripta la contraseña usando password_hash
       $claveEncriptada = password_hash($datosForm['clave'], PASSWORD_DEFAULT);
 
       // Actualiza el dato de la contraseña en el array
       $datosForm['clave'] = $claveEncriptada;
 
-    // Llama al método de registro en tu modelo con los datos capturados
-    $correo->registrarUsuario($datosForm);
+      // Llama al método de registro en tu modelo con los datos capturados
+      $correo->registrarUsuario($datosForm);
 
-    // Devuelve una respuesta JSON al cliente
-    $respuesta = [
-        "status" => true,
-        "mensaje" => "Registro exitoso"
-    ];
-    echo json_encode($respuesta);
+      // Genera un token de activación único
+      $token = $correo->generarToken(); // Genera un token aleatorio
+
+      // Almacena el token en la base de datos
+      $correo->almacenarTokenActivacion($datosForm['correo'], $token);
+
+      // Devuelve una respuesta JSON al cliente
+      $respuesta = [
+          "status" => true,
+          "mensaje" => "Registro exitoso"
+      ];
+      echo json_encode($respuesta);
+
+    else:
+
+      // Devuelve una respuesta JSON al cliente
+      $respuesta = [
+          "status" => true,
+          "mensaje" => "Email existente"
+      ];
+      echo json_encode($respuesta);
+
+    endif;
 }
+
+
+
+
+
+
+
+
+
+//-------------------------------------------------------------
+
+
+
+
+
+
+
 
   // Intercertar valores que llegan por la URL
   if (isset($_GET['operacion'])){

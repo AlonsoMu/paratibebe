@@ -9,6 +9,14 @@ BEGIN
 	WHERE correo = correo_;
 END $$
 
+DELIMITER $$
+CREATE PROCEDURE spu_traercorreo(IN correo_ VARCHAR(60))
+BEGIN
+	SELECT idusuario, correo
+	FROM usuarios
+	WHERE correo = correo_;
+END $$
+
 -- LISTAR USUARIO
 DELIMITER $$
 CREATE PROCEDURE spu_listar_usuario()
